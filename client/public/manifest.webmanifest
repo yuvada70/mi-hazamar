@@ -1,0 +1,15 @@
+{
+  "name": "מי הזמר — משחק ניחושים מוזיקלי",
+  "short_name": "מי הזמר",
+  "description": "משחק קבוצתי שבו מנחשים מי ביצע במקור שירים עבריים מפורסמים.",
+  "lang": "he",
+  "dir": "rtl",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0b1220",
+  "theme_color": "#0b1220",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

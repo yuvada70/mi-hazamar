@@ -1,0 +1,31 @@
+{
+  "name": "mi-hazamar",
+  "version": "1.0.0",
+  "private": true,
+  "description": "מי הזמר — משחק ניחושים קבוצתי בזמן אמת: מי ביצע במקור שירים עבריים מפורסמים",
+  "type": "module",
+  "workspaces": [
+    "shared",
+    "server",
+    "client"
+  ],
+  "engines": {
+    "node": ">=20.11"
+  },
+  "scripts": {
+    "dev": "npm-run-all --parallel dev:server dev:client",
+    "dev:server": "npm run dev --workspace @mihazamar/server",
+    "dev:client": "npm run dev --workspace @mihazamar/client",
+    "build": "npm run build --workspace @mihazamar/shared && npm run build --workspace @mihazamar/client && npm run build --workspace @mihazamar/server",
+    "start": "npm run start --workspace @mihazamar/server",
+    "typecheck": "npm-run-all --serial typecheck:*",
+    "typecheck:shared": "npm run typecheck --workspace @mihazamar/shared",
+    "typecheck:server": "npm run build --workspace @mihazamar/shared && npm run typecheck --workspace @mihazamar/server",
+    "typecheck:client": "npm run typecheck --workspace @mihazamar/client",
+    "test": "npm run build --workspace @mihazamar/shared && npm run test --workspace @mihazamar/shared && npm run test --workspace @mihazamar/server"
+  },
+  "devDependencies": {
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.6.3"
+  }
+}

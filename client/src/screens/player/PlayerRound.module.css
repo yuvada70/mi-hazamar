@@ -1,0 +1,301 @@
+.page {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-3);
+  width: 100%;
+  max-width: 760px;
+  min-height: 0;
+  padding: calc(var(--space-2) + var(--safe-top)) var(--space-4) calc(var(--space-2) + var(--safe-bottom));
+  margin-inline: auto;
+}
+
+/* ── כותרת ─────────────────────────────────────────────────── */
+
+.header {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.headerSide {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.headerEnd {
+  align-items: flex-end;
+}
+
+.headerSpacer {
+  width: 62px;
+  height: 62px;
+}
+
+.roundLabel {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.roundTotal {
+  color: var(--color-text-subtle);
+}
+
+.score {
+  font-size: var(--text-xl);
+  font-weight: 900;
+  line-height: 1;
+  color: var(--color-primary);
+}
+
+.scoreLabel {
+  font-size: var(--text-2xs);
+  font-weight: 600;
+  color: var(--color-text-subtle);
+}
+
+.rank {
+  font-size: var(--text-2xs);
+  font-weight: 700;
+  color: var(--color-accent);
+}
+
+/* ── שאלה ──────────────────────────────────────────────────── */
+
+.promptBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: center;
+  text-align: center;
+}
+
+.prompt {
+  font-size: var(--text-2xl);
+  line-height: 1.15;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.promptYear {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-text-subtle);
+}
+
+.promptMuted {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--color-text-subtle);
+}
+
+/* ── במה ───────────────────────────────────────────────────── */
+
+.stage {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+
+/* ── כרטיסיות תשובה ────────────────────────────────────────── */
+
+.options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+.option {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  min-height: 84px;
+  padding: var(--space-4);
+  text-align: start;
+  background: var(--color-surface-strong);
+  border: 2px solid var(--color-border-strong);
+  border-radius: var(--radius-lg);
+  transition:
+    transform var(--duration-fast) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out),
+    background-color var(--duration-base) var(--ease-out),
+    opacity var(--duration-base) var(--ease-out);
+}
+
+.option:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.option:disabled {
+  opacity: 0.6;
+}
+
+.optionIcon {
+  flex-shrink: 0;
+  font-size: var(--text-xl);
+}
+
+.optionText {
+  overflow: hidden;
+  font-weight: 700;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+}
+
+.tone_a {
+  color: var(--answer-a);
+}
+
+.tone_b {
+  color: var(--answer-b);
+}
+
+.tone_c {
+  color: var(--answer-c);
+}
+
+.tone_d {
+  color: var(--answer-d);
+}
+
+.tone_a.optionSelected {
+  background: rgb(255 107 107 / 16%);
+  border-color: var(--answer-a);
+}
+
+.tone_b.optionSelected {
+  background: rgb(102 170 255 / 16%);
+  border-color: var(--answer-b);
+}
+
+.tone_c.optionSelected {
+  background: rgb(255 194 71 / 16%);
+  border-color: var(--answer-c);
+}
+
+.tone_d.optionSelected {
+  background: rgb(33 212 180 / 16%);
+  border-color: var(--answer-d);
+}
+
+/* ── כרטיס חשיפה ───────────────────────────────────────────── */
+
+.revealCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  align-items: center;
+  padding: var(--space-6) var(--space-5);
+  text-align: center;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+}
+
+.revealBadge {
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: var(--color-text-subtle);
+  background: var(--color-surface-strong);
+  border-radius: var(--radius-pill);
+}
+
+.revealLabel {
+  margin-block-start: var(--space-2);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  color: var(--color-text-subtle);
+}
+
+.revealArtist {
+  font-size: var(--text-2xl);
+  color: var(--color-accent);
+}
+
+.outcome {
+  padding: var(--space-2) var(--space-4);
+  margin-block-start: var(--space-2);
+  font-weight: 800;
+  border-radius: var(--radius-pill);
+}
+
+.outcomeCorrect {
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
+}
+
+.outcomeWrong {
+  color: var(--color-danger);
+  background: var(--color-danger-soft);
+}
+
+/* ── באנר מצב ──────────────────────────────────────────────── */
+
+.banner {
+  padding: var(--space-4) var(--space-6);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+/* ── כותרת תחתונה ──────────────────────────────────────────── */
+
+.footer {
+  display: flex;
+  justify-content: center;
+  min-height: 42px;
+  /* שומר מרווח מכפתורי ההעדפות שבפינות התחתונות. */
+  padding-inline: 46px;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  padding: var(--space-2) var(--space-5);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-align: center;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+}
+
+.statusOk {
+  color: var(--color-primary);
+  background: var(--color-primary-soft);
+  border-color: rgb(33 212 180 / 40%);
+}
+
+@media (min-width: 900px) {
+  .page {
+    max-width: 900px;
+  }
+
+  .prompt {
+    font-size: var(--text-3xl);
+  }
+
+  .options {
+    gap: var(--space-4);
+  }
+
+  .option {
+    min-height: 110px;
+  }
+}
+
+@media (max-width: 480px) {
+  .options {
+    grid-template-columns: 1fr;
+  }
+}
