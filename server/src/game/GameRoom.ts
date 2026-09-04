@@ -694,9 +694,9 @@ export function normalizeSettings(partial: Partial<GameSettings>): GameSettings 
   const pack = getSongPack(packId);
   const pool = selectSongPool(pack, difficulty);
   const maxRounds = Math.min(SETTINGS_LIMITS.roundCount.max, pool.length);
-  // ברירת המחדל היא כל השירים שבמאגר שנבחר — לא מספר קבוע שעלול
-  // לפגר מאחורי תוכן שנוסף בעתיד.
-  const defaultRoundCount = maxRounds;
+  // ברירת המחדל היא הערך הקבוע (10, ר' DEFAULT_SETTINGS) — אך אם
+  // במאגר שנבחר יש פחות שירים מזה, מצמצמים למה שיש בפועל.
+  const defaultRoundCount = Math.min(DEFAULT_SETTINGS.roundCount, maxRounds);
 
   return {
     packId,

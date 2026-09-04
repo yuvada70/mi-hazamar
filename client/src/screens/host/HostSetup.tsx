@@ -1,9 +1,10 @@
 /**
  * יצירת משחק חדש.
  *
- * ברירת המחדל מכוונת ל"התחל ולך" — כל השירים בדרגת הקושי הנבחרת,
- * 15 שניות לכל שיר — וההגדרות הבסיסיות בלבד גלויות, כדי שמנהל
- * שרוצה פשוט להתחיל לא ייתקל בטופס ארוך.
+ * ברירת המחדל מכוונת ל"התחל ולך": 10 סיבובים, 15 שניות לכל שיר —
+ * וההגדרות הבסיסיות בלבד גלויות, כדי שמנהל שרוצה פשוט להתחיל לא
+ * ייתקל בטופס ארוך. אם בדרגת הקושי הנבחרת יש פחות שירים ממספר
+ * הסיבובים שנבחר, השרת מצמצם אוטומטית והממשק מציג על כך הודעה.
  */
 
 import { useState } from 'react';
@@ -13,6 +14,7 @@ import {
   DIFFICULTY_DESCRIPTIONS,
   DIFFICULTY_LABELS,
   HEBREW_CLASSICS_PACK,
+  ROUND_COUNT_OPTIONS,
   SETTINGS_LIMITS,
   selectSongPool,
   type Difficulty,
@@ -34,35 +36,18 @@ export function HostSetup(): JSX.Element {
 
   const [settings, setSettings] = useState<GameSettings>(() => ({
     ...DEFAULT_SETTINGS,
-    roundCount: poolSizeFor(DEFAULT_SETTINGS.difficulty),
+    roundCount: Math.min(DEFAULT_SETTINGS.roundCount, poolSizeFor(DEFAULT_SETTINGS.difficulty)),
   }));
   const [advancedOpen, setAdvancedOpen] = useState(false);
   const [creating, setCreating] = useState(false);
 
   const totalSongs = poolSizeFor(settings.difficulty);
-  const maxRoundCount = Math.min(SETTINGS_LIMITS.roundCount.max, totalSongs);
 
   const update = <K extends keyof GameSettings>(key: K, value: GameSettings[K]) =>
     setSettings((current) => ({ ...current, [key]: value }));
 
-  /**
-   * החלפת דרגת קושי משנה את גודל המאגר. אם "כל השירים" הייתה הבחירה
-   * הפעילה, היא נשמרת גם מול המאגר החדש; אחרת מספר הסיבובים נשמר
-   * (ומכווץ אם צריך) כדי לא לחרוג מהמאגר החדש.
-   */
-  const updateDifficulty = (difficulty: Difficulty) =>
-    setSettings((current) => {
-      const currentPoolSize = poolSizeFor(current.difficulty);
-      const wasAllSongs = current.roundCount >= Math.min(SETTINGS_LIMITS.roundCount.max, currentPoolSize);
-      const nextPoolSize = poolSizeFor(difficulty);
-      const nextMax = Math.min(SETTINGS_LIMITS.roundCount.max, nextPoolSize);
-
-      return {
-        ...current,
-        difficulty,
-        roundCount: wasAllSongs ? nextMax : Math.min(current.roundCount, nextMax),
-      };
-    });
+  /** החלפת דרגת קושי אינה משנה את מספר הסיבובים הנבחר — השרת מצמצם אותו אוטומטית אם צריך. */
+  const updateDifficulty = (difficulty: Difficulty) => update('difficulty', difficulty);
 
   const handleCreate = async () => {
     setCreating(true);
@@ -100,19 +85,26 @@ export function HostSetup(): JSX.Element {
         </section>
 
         <section className={styles.section}>
-          <div className={styles.sliderHead}>
-            <h2 className={styles.sectionTitle}>מספר שאלות</h2>
-            <span className={`${styles.sliderValue} tabular`}>{settings.roundCount}</span>
+          <h2 className={styles.sectionTitle}>מספר שאלות</h2>
+          <div className={styles.roundCounts}>
+            {ROUND_COUNT_OPTIONS.map((count) => (
+              <button
+                key={count}
+                className={`${styles.roundCountChip} ${settings.roundCount === count ? styles.roundCountChipActive : ''}`}
+                onClick={() => update('roundCount', count)}
+                aria-pressed={settings.roundCount === count}
+              >
+                {count}
+              </button>
+            ))}
           </div>
-          <input
-            type="range"
-            className={styles.slider}
-            min={Math.min(SETTINGS_LIMITS.roundCount.min, maxRoundCount)}
-            max={maxRoundCount}
-            value={settings.roundCount}
-            onChange={(event) => update('roundCount', Number(event.target.value))}
-          />
-          <p className={styles.sliderHint}>מתוך {totalSongs} שירים זמינים בדרגת הקושי הנבחרת</p>
+          {totalSongs < settings.roundCount ? (
+            <p className={styles.roundCountWarning}>
+              יש רק {totalSongs} שירים בדרגת הקושי הנבחרת — המשחק ישחק {totalSongs} סיבובים בלבד.
+            </p>
+          ) : (
+            <p className={styles.sliderHint}>מתוך {totalSongs} שירים זמינים בדרגת הקושי הנבחרת</p>
+          )}
         </section>
 
         <section className={styles.section}>

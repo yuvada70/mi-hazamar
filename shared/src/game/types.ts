@@ -44,15 +44,15 @@ export interface GameSettings {
 }
 
 /**
- * ערכי ברירת המחדל למשחק חדש — דרגת קושי בינונית, 15 שניות לכל שיר.
- * שדה roundCount כאן הוא ערך גיבוי בלבד; בפועל השרת (ר' normalizeSettings)
- * וממסך יצירת המשחק קובעים ברירת מחדל דינמית השווה למספר כל השירים
- * במאגר שנבחר, כדי שהמשחק תמיד ישחק בכל התוכן הזמין כברירת מחדל.
+ * ערכי ברירת המחדל למשחק חדש — דרגת קושי בינונית, 15 שניות לכל שיר,
+ * 10 סיבובים. אם במאגר שנבחר יש פחות שירים מהמבוקש, השרת (ר'
+ * normalizeSettings) מצמצם אוטומטית למה שיש בפועל — ראו
+ * {@link ROUND_COUNT_OPTIONS}.
  */
 export const DEFAULT_SETTINGS: GameSettings = {
   packId: 'hebrew-classics',
   difficulty: 'medium',
-  roundCount: 15,
+  roundCount: 10,
   roundDurationMs: 15_000,
   revealMs: 5_000,
   countdownMs: 3_000,
@@ -60,9 +60,15 @@ export const DEFAULT_SETTINGS: GameSettings = {
   showLiveRank: true,
 };
 
+/**
+ * אפשרויות מספר הסיבובים המוצגות במסך יצירת המשחק. קבועות (ולא
+ * "כל התוכן הזמין") כדי שמנהל ידע מראש כמה זמן המשחק ייקח.
+ */
+export const ROUND_COUNT_OPTIONS = [5, 10, 15, 20] as const;
+
 /** גבולות תקינות להגדרות — נאכפים בשרת. */
 export const SETTINGS_LIMITS = {
-  roundCount: { min: 3, max: 30 },
+  roundCount: { min: 3, max: 40 },
   roundDurationMs: { min: 5_000, max: 60_000 },
   revealMs: { min: 2_000, max: 12_000 },
   countdownMs: { min: 0, max: 10_000 },

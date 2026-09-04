@@ -8,12 +8,14 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { DEFAULT_SETTINGS, HEBREW_CLASSICS_PACK, selectSongPool } from '@mihazamar/shared';
+import { DEFAULT_SETTINGS, HEBREW_CLASSICS_PACK, SETTINGS_LIMITS, selectSongPool } from '@mihazamar/shared';
 
 import { GameError, GameRoom, normalizeSettings, type RoomListeners, type Scheduler } from './GameRoom.js';
 
 /** מאגר ברירת המחדל (בינוני) — בסיס להשוואה בבדיקות. */
 const DEFAULT_POOL_SIZE = selectSongPool(HEBREW_CLASSICS_PACK, DEFAULT_SETTINGS.difficulty).length;
+/** מספר הסיבובים בפועל כשלא מתבקש אחרת — הערך הקבוע (10), או המאגר כולו אם הוא קטן מזה. */
+const DEFAULT_ROUND_COUNT = Math.min(DEFAULT_SETTINGS.roundCount, DEFAULT_POOL_SIZE);
 
 /** שעון מדומה עם תור טיימרים — מאפשר "לקפוץ" קדימה בזמן. */
 class FakeScheduler implements Scheduler {
@@ -150,7 +152,7 @@ describe('מהלך המשחק', () => {
     const state = room.getPublicState();
     assert.equal(state.phase, 'question');
     assert.equal(state.round?.index, 0);
-    assert.equal(state.round?.total, DEFAULT_POOL_SIZE);
+    assert.equal(state.round?.total, DEFAULT_ROUND_COUNT);
     assert.equal(state.round?.options.length, 4);
   });
 
@@ -376,16 +378,19 @@ describe('שליטת המנהל', () => {
 });
 
 describe('normalizeSettings', () => {
-  it('משלים ברירות מחדל — מספר הסיבובים הוא כל שירי המאגר (בינוני)', () => {
+  it('משלים ברירות מחדל — מספר הסיבובים הוא הערך הקבוע (10), או כל המאגר אם הוא קטן מזה', () => {
     const settings = normalizeSettings({});
-    assert.equal(settings.roundCount, DEFAULT_POOL_SIZE);
+    assert.equal(settings.roundCount, DEFAULT_ROUND_COUNT);
     assert.equal(settings.roundDurationMs, 15_000);
     assert.equal(settings.packId, 'hebrew-classics');
     assert.equal(settings.difficulty, 'medium');
   });
 
   it('מגביל ערכים חורגים לטווח המותר', () => {
-    assert.equal(normalizeSettings({ roundCount: 9_999 }).roundCount, DEFAULT_POOL_SIZE);
+    assert.equal(
+      normalizeSettings({ roundCount: 9_999 }).roundCount,
+      Math.min(SETTINGS_LIMITS.roundCount.max, DEFAULT_POOL_SIZE),
+    );
     assert.equal(normalizeSettings({ roundCount: -5 }).roundCount, 3);
     assert.equal(normalizeSettings({ roundDurationMs: 1 }).roundDurationMs, 5_000);
     assert.equal(normalizeSettings({ roundDurationMs: 10 ** 9 }).roundDurationMs, 60_000);
@@ -403,12 +408,18 @@ describe('normalizeSettings', () => {
   it('שולף מאגר שונה לפי דרגת קושי', () => {
     const easy = normalizeSettings({ difficulty: 'easy' });
     const pro = normalizeSettings({ difficulty: 'pro' });
-    assert.equal(easy.roundCount, selectSongPool(HEBREW_CLASSICS_PACK, 'easy').length);
-    assert.equal(pro.roundCount, selectSongPool(HEBREW_CLASSICS_PACK, 'pro').length);
+    assert.equal(
+      easy.roundCount,
+      Math.min(DEFAULT_SETTINGS.roundCount, selectSongPool(HEBREW_CLASSICS_PACK, 'easy').length),
+    );
+    assert.equal(
+      pro.roundCount,
+      Math.min(DEFAULT_SETTINGS.roundCount, selectSongPool(HEBREW_CLASSICS_PACK, 'pro').length),
+    );
   });
 
   it('עמיד בפני קלט שאינו מספר', () => {
     const settings = normalizeSettings({ roundCount: 'הרבה' as unknown as number });
-    assert.equal(settings.roundCount, DEFAULT_POOL_SIZE);
+    assert.equal(settings.roundCount, DEFAULT_ROUND_COUNT);
   });
 });

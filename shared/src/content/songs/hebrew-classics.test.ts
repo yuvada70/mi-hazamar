@@ -29,9 +29,11 @@ describe('חבילת "להיטים עבריים"', () => {
   });
 
   it('לכל שיר שנה סבירה', () => {
+    // 1900 ולא 1948 (הקמת המדינה): כמה שירי מאגר קדומים לה — כתיבה
+    // עברית וזמר עברי חדש היו פעילים כבר בתקופת היישוב.
     const currentYear = new Date().getFullYear();
     for (const song of songs) {
-      assert.ok(song.year >= 1948 && song.year <= currentYear, `${song.title}: שנה לא סבירה (${song.year})`);
+      assert.ok(song.year >= 1900 && song.year <= currentYear, `${song.title}: שנה לא סבירה (${song.year})`);
     }
   });
 
